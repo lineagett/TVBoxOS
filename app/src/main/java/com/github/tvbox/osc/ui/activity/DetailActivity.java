@@ -110,7 +110,7 @@ public class DetailActivity extends BaseActivity {
     public String sourceKey;
     boolean seriesSelect = false;
     private View seriesFlagFocus = null;
-    private boolean isReverse;
+//    private boolean isReverse;
 
     @Override
     protected int getLayoutResID() {
@@ -157,7 +157,7 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesFlagAdapter = new SeriesFlagAdapter();
         mGridViewFlag.setAdapter(seriesFlagAdapter);
-        isReverse = false;
+//        isReverse = false;
         if (showPreview) {
             playFragment = new PlayFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.previewPlayer, playFragment).commit();
@@ -165,22 +165,25 @@ public class DetailActivity extends BaseActivity {
             tvPlay.setText("全屏");
         }
         tvSort.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
+//            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     vodInfo.reverseSort = !vodInfo.reverseSort;
-                    isReverse = !isReverse;
-//                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
-//                        vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
-//                    }
-                    vodInfo.reverse();
-//                    if (vodInfo.seriesMap.get(preFlag).size() > vodInfo.playIndex) {
-//                        vodInfo.seriesMap.get(preFlag).get(vodInfo.playIndex).selected = false;
-//                    }
+//                    isReverse = !isReverse;
                     preFlag = "";
+                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+                        vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
+                    }
+                    vodInfo.reverse();
+                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+                        vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+                    }
+
+
                     insertVod(sourceKey, vodInfo);
                     seriesAdapter.notifyDataSetChanged();
+
                 }
             }
         });
@@ -236,7 +239,7 @@ public class DetailActivity extends BaseActivity {
                     tvCollect.setText("取消收藏");
                 } else {
                     RoomDataManger.deleteVodCollect(sourceKey, vodInfo);
-                    Toast.makeText(DetailActivity.this, "已移除收藏夹", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailActivity.this, "已移出收藏夹", Toast.LENGTH_SHORT).show();
                     tvCollect.setText("加入收藏");
                 }
             }
@@ -373,14 +376,7 @@ public class DetailActivity extends BaseActivity {
         }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
-            boolean canSelect = true;
-            for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-                if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected == true){
-                    canSelect = false;
-                    break;
-                }
-            }
-            if(canSelect)vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
         }
 
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
@@ -755,9 +751,9 @@ public class DetailActivity extends BaseActivity {
     boolean fullWindows = false;
     ViewGroup.LayoutParams windowsPreview = null;
     ViewGroup.LayoutParams windowsFull = null;
-//    ViewGroup playerParent = null;
-//    View playerRoot = null;
-//    ViewGroup llLayoutParent = null;
+    ViewGroup playerParent = null;
+    View playerRoot = null;
+    ViewGroup llLayoutParent = null;
 
     void toggleFullPreview() {
         if (windowsPreview == null) {
@@ -767,25 +763,25 @@ public class DetailActivity extends BaseActivity {
             windowsFull = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
         fullWindows = !fullWindows;
-//        if (playerRoot == null)
-//            playerRoot = (View) llPlayerFragmentContainer.findViewById(R.id.mVideoView).getParent();
-//
-//        if (playerParent == null) {
-//            playerParent = (ViewGroup) playerRoot.getParent();
-//        }
-//        if (llLayoutParent == null)
-//            llLayoutParent = (ViewGroup) llLayout.getParent();
+        if (playerRoot == null)
+            playerRoot = (View) llPlayerFragmentContainer.findViewById(R.id.mVideoView).getParent();
 
-//        if (fullWindows) {
-//            playerParent.removeView(playerRoot);
-//            ((ViewGroup) getWindow().getDecorView()).addView(playerRoot);
-//            llLayoutParent.removeView(llLayout);
-//        } else {
-//            ((ViewGroup) getWindow().getDecorView()).removeView(playerRoot);
-//            playerParent.addView(playerRoot);
-//            llLayoutParent.addView(llLayout);
-//        }
-        llPlayerFragmentContainer.setLayoutParams(fullWindows ? windowsFull : windowsPreview);
+        if (playerParent == null) {
+            playerParent = (ViewGroup) playerRoot.getParent();
+        }
+        if (llLayoutParent == null)
+            llLayoutParent = (ViewGroup) llLayout.getParent();
+
+        if (fullWindows) {
+            playerParent.removeView(playerRoot);
+            ((ViewGroup) getWindow().getDecorView()).addView(playerRoot);
+            llLayoutParent.removeView(llLayout);
+        } else {
+            ((ViewGroup) getWindow().getDecorView()).removeView(playerRoot);
+            playerParent.addView(playerRoot);
+            llLayoutParent.addView(llLayout);
+        }
+//        llPlayerFragmentContainer.setLayoutParams(fullWindows ? windowsFull : windowsPreview);
         llPlayerFragmentContainerBlock.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
     }
 }
