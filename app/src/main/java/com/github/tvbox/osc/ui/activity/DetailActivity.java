@@ -157,7 +157,7 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesFlagAdapter = new SeriesFlagAdapter();
         mGridViewFlag.setAdapter(seriesFlagAdapter);
-//        isReverse = false;
+
         if (showPreview) {
             playFragment = new PlayFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.previewPlayer, playFragment).commit();
@@ -165,22 +165,13 @@ public class DetailActivity extends BaseActivity {
             tvPlay.setText("全屏");
         }
         tvSort.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     vodInfo.reverseSort = !vodInfo.reverseSort;
-//                    isReverse = !isReverse;
-                    preFlag = "";
-                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
-                        vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
-                    }
+//                    preFlag = "";
                     vodInfo.reverse();
-                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
-                        vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-                    }
-
-
+                    vodInfo.playIndex = vodInfo.seriesMap.get(vodInfo.playFlag).size() - 1 - vodInfo.playIndex;
                     insertVod(sourceKey, vodInfo);
                     seriesAdapter.notifyDataSetChanged();
 
@@ -292,13 +283,13 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 refresh(itemView, position);
-//                if(isReverse)vodInfo.reverse();
+
             }
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 refresh(itemView, position);
-//                if(isReverse)vodInfo.reverse();
+
             }
         });
         seriesAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -323,8 +314,12 @@ public class DetailActivity extends BaseActivity {
                     seriesAdapter.getData().get(vodInfo.playIndex).selected = true;
                     seriesAdapter.notifyItemChanged(vodInfo.playIndex);
                     //选集全屏 想选集不全屏的注释下面一行
-                    if (showPreview && !fullWindows) toggleFullPreview();
-                    if (!showPreview || reload) jumpToPlay();
+                    if (showPreview && !fullWindows) {
+                        toggleFullPreview();
+                    }
+                    if (!showPreview || reload) {
+                        jumpToPlay();
+                    }
                 }
             }
         });
@@ -781,7 +776,8 @@ public class DetailActivity extends BaseActivity {
             playerParent.addView(playerRoot);
             llLayoutParent.addView(llLayout);
         }
-//        llPlayerFragmentContainer.setLayoutParams(fullWindows ? windowsFull : windowsPreview);
-        llPlayerFragmentContainerBlock.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
+        llPlayerFragmentContainer.setLayoutParams(fullWindows ? windowsFull : windowsPreview);
+//        llPlayerFragmentContainerBlock.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
+
     }
 }
