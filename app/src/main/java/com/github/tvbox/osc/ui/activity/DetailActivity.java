@@ -169,7 +169,7 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     vodInfo.reverseSort = !vodInfo.reverseSort;
-//                    preFlag = "";
+                    preFlag = "";
                     vodInfo.reverse();
                     vodInfo.playIndex = vodInfo.seriesMap.get(vodInfo.playFlag).size() - 1 - vodInfo.playIndex;
                     insertVod(sourceKey, vodInfo);
